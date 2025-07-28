@@ -1,0 +1,2 @@
+APScheduler
+python-dotenv
