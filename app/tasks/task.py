@@ -2,6 +2,9 @@ import logging
 from app import config
 from app.libs.httpStrategySelector import get_http
 import jmespath
+import json
+import jsonschema
+from jsonschema import validate
 
 logger = logging.getLogger(__name__)
 
@@ -40,11 +43,23 @@ def getBeaconData():
     try:
         data = response.json()
         logger.info(f"API response received and parsed: {data}")
-        return data
 
     except Exception as e:
         logger.error(f"Response is not valid JSON: {e}")
         return None
+
+    with open("./app/libs/schemas/beacon-schema-short.json") as f:
+        schema = json.load(f)
+
+    try:
+        validate(instance=data, schema=schema)
+        logger.info("JSON is valid")
+    except jsonschema.exceptions.ValidationError as e:
+        logger.error("JSON is invalid")
+        logger.error(f"Error: {e.message}")
+
+    return data
+
 
 def parseBeaconData(data):
     search = "results[*].entity.{id: id, attachments: attachments[*].{id: id, url:url, type: type}}"

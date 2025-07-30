@@ -8,6 +8,9 @@ from app import config
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+def do_task_now():
+    scheduled_task()
+
 def start_scheduler():
     scheduler = BackgroundScheduler()
 

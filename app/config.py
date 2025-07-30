@@ -12,7 +12,7 @@ def get_env(name: str, default=None, required=False, cast=str):
     except (ValueError, TypeError):
         raise ValueError(f"Environment variable {name} must be of type {cast.__name__}")
 
-ENV=""
+ENV=get_env("ENV", default="development")
 # Example: "0 30 3 * * *" → 3:30 AM daily
 # default: every minute
 SCHEDULE_CRON = get_env("SCHEDULE_CRON", default="*/1 * * * *")

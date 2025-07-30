@@ -1,4 +1,5 @@
-from app.runner import start_scheduler
+from app.runner import start_scheduler, do_task_now
 
 if __name__ == "__main__":
-    start_scheduler()
+    #start_scheduler()
+    do_task_now()

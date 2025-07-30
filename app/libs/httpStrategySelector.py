@@ -1,8 +1,9 @@
-import json
 from typing import Callable
 import requests
 from requests import Response
-from config import ENV
+from app.config import ENV
+
+import json
 
 # Transparent HTTP getter type
 HttpGetter = Callable[[str, dict], requests.Response]
@@ -11,10 +12,8 @@ def real_http_get(url: str, headers: dict) -> requests.Response:
     return requests.get(url, headers=headers, timeout=10)
 
 def mock_http_get(url: str, headers: dict) -> requests.Response:
-    mock_data = {
-        "status": "success",
-        "result": {"message": f"[MOCKED] data for {url}"}
-    }
+    with open("./app/libs/data/beacon-data.json") as f:
+        mock_data = json.load(f)
 
     mock_response = Response()
     mock_response.status_code = 200
