@@ -1,6 +1,6 @@
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
-from app.task import scheduled_task
+from app.tasks.task import scheduled_task
 import time
 import logging
 from app import config
