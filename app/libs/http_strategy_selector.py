@@ -1,18 +1,19 @@
 from typing import Callable
 import requests
 from requests import Response
-from app.config import ENV
+from app.config import ENV, get_project_root
 
 import json
 
-# Transparent HTTP getter type
+PROJECT_ROOT = get_project_root()
+
 HttpGetter = Callable[[str, dict], requests.Response]
 
 def real_http_get(url: str, headers: dict) -> requests.Response:
     return requests.get(url, headers=headers, timeout=10)
 
 def mock_http_get(url: str, headers: dict) -> requests.Response:
-    with open("./app/libs/data/beacon-data.json") as f:
+    with open(PROJECT_ROOT / "app/libs/data/beacon-data.json") as f:
         mock_data = json.load(f)
 
     mock_response = Response()

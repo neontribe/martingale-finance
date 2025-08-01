@@ -6,3 +6,4 @@ pytest-mock
 jmespath
 jsonschema
 pyprojroot
+google-cloud-aiplatform

@@ -1,31 +1,31 @@
-import logging
 from app import config
-from app.libs.httpStrategySelector import get_http
+from app.libs.document_strategy_selector import document_get
+from app.libs.http_strategy_selector import get_http
 import jmespath
 import json
 import jsonschema
 from jsonschema import validate
 
-logger = logging.getLogger(__name__)
+from libs.ai_strategy import upload_gcs_file_part
 
 def scheduled_task():
-    logger.info("Scheduled task started.")
+    config.LOGGER.info("Scheduled task started.")
 
     # get beacon data
-    data = getBeaconData()
+    data = get_beacon_data()
 
     # parse it
     if data is not None:
-        parsed = parseBeaconData(data)
+        parsed = parse_beacon_data(data)
         # process it
         if parsed is not None:
             process(parsed)
         else:
-            logger.error("Bad data from beacon")
+            config.LOGGER.error("Bad data from beacon")
     else:
-        logger.error("No Data from Beacon")
+        config.LOGGER.error("No Data from Beacon")
 
-def getBeaconData():
+def get_beacon_data():
     headers = {
         "Content-Type": "application/json",
         "Authorization": f"Bearer {config.API_BEARER_TOKEN}",
@@ -37,15 +37,15 @@ def getBeaconData():
         response = get_http(config.API_URL, headers)
         response.raise_for_status()
     except Exception as e:
-        logger.error(f"HTTP request failed: {e}")
+        config.LOGGER.error(f"HTTP request failed: {e}")
         return None
 
     try:
         data = response.json()
-        logger.info(f"API response received and parsed: {data}")
+        config.LOGGER.info(f"API response received and parsed: {data}")
 
     except Exception as e:
-        logger.error(f"Response is not valid JSON: {e}")
+        config.LOGGER.error(f"Response is not valid JSON: {e}")
         return None
 
     with open("./app/libs/schemas/beacon-schema-short.json") as f:
@@ -53,15 +53,15 @@ def getBeaconData():
 
     try:
         validate(instance=data, schema=schema)
-        logger.info("JSON is valid")
+        config.LOGGER.info("JSON is valid")
     except jsonschema.exceptions.ValidationError as e:
-        logger.error("JSON is invalid")
-        logger.error(f"Error: {e.message}")
+        config.LOGGER.error("JSON is invalid")
+        config.LOGGER.error(f"Error: {e.message}")
 
     return data
 
 
-def parseBeaconData(data):
+def parse_beacon_data(data):
     search = "results[*].entity.{id: id, attachments: attachments[*].{id: id, url:url, type: type}}"
     parsed = jmespath.search(search, data)
     return parsed
@@ -71,10 +71,10 @@ def process(data):
         item_id = item.get("id")
         attachments = item.get("attachments", [])
 
-        print(f"\nProcessing item ID: {item_id}")
+        config.LOGGER.info(f"\nProcessing item ID: {item_id}")
 
         if not attachments:
-            print("  No attachments.")
+            config.LOGGER.error("  No attachments.")
         else:
             for attachment in attachments:
                 att_id = attachment.get("id")
@@ -82,6 +82,14 @@ def process(data):
                 att_type = attachment.get("type")
 
                 # Do your processing here
-                print(f"  Attachment ID: {att_id}")
-                print(f"  Type: {att_type}")
-                print(f"  URL: {att_url}")
+                config.LOGGER.info(f"  Attachment ID: {att_id}")
+                config.LOGGER.info(f"  Type: {att_type}")
+                config.LOGGER.info(f"  URL: {att_url}")
+
+                document_data = document_get(att_url)
+
+                part = upload_gcs_file_part(att_id, document_data, att_type)
+
+
+def gemini_prompt():
+    return
