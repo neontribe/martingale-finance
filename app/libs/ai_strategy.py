@@ -1,7 +1,8 @@
-from vertexai.generative_models import Part
+import vertexai
+from vertexai.generative_models import GenerativeModel, Part
 from google.cloud import storage
 from google.oauth2 import service_account
-from config import LOGGER, GCS_BUCKET_NAME, GOOGLE_APPLICATION_CREDENTIALS_JSON, get_project_root
+from config import LOGGER, GCS_BUCKET_NAME, PROJECT_ID, GOOGLE_APPLICATION_CREDENTIALS_JSON, get_project_root
 import json
 
 def upload_gcs_file_part(target_filename: str, contents: bytes = None, mime_type: str = 'text/plain') -> Part:
@@ -48,3 +49,35 @@ def set_storage_with_credentials():
         for bucket in storage_client.list_buckets():
             LOGGER.info(f"- {bucket.name}")
     return storage_client
+
+
+def analyze_document_with_gemini(
+    location: str,
+    document_part: Part,
+    query_text: str
+):
+    # 1. Initialize Vertex AI client with project and location.
+    # This is critical for specifying the geographic jurisdiction.
+    vertexai.init(project=PROJECT_ID, location=location)
+
+    # 2. Load the GenerativeModel
+    model = GenerativeModel("gemini-2.5-flash")
+
+    # 3. Create the multimodal prompt using Part objects.
+    # The prompt is a list of "parts" that can be text, images, files, etc.
+    multimodal_prompt = [
+        # Part 1:
+        document_part,
+        # Part 2: The text query to perform on the document.
+        Part.from_text(query_text)
+    ]
+
+    LOGGER.info("Sending prompt to the model\n")
+    LOGGER.info(f"Query: {query_text}\n")
+
+    # 4. Call the model to generate content.
+    response = model.generate_content(multimodal_prompt)
+
+    # 5. Print the model's response.
+    LOGGER.info("Model's determination:")
+    LOGGER.info(response.text)

@@ -6,7 +6,7 @@ import json
 import jsonschema
 from jsonschema import validate
 
-from libs.ai_strategy import upload_gcs_file_part
+from libs.ai_strategy import upload_gcs_file_part, analyze_document_with_gemini
 
 def scheduled_task():
     config.LOGGER.info("Scheduled task started.")
@@ -89,7 +89,10 @@ def process(data):
                 document_data = document_get(att_url)
 
                 part = upload_gcs_file_part(att_id, document_data, att_type)
+                query = "This is a multipart query with a document part. Enumerate the properties of the document part."
+                analyze_document_with_gemini("europe-west2", part, query)
 
 
-def gemini_prompt():
-    return
+part = upload_gcs_file_part("chips.txt", "fish n chips!", "text/plain")
+query = "This is a multipart query with a document part. Enumerate the properties of the document part."
+analyze_document_with_gemini("europe-west2", part, query);
