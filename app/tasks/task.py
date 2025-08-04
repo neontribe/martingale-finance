@@ -1,12 +1,14 @@
-from app import config
-from app.libs.document_strategy_selector import document_get
-from app.libs.http_strategy_selector import get_http
-import jmespath
 import json
+
+import jmespath
 import jsonschema
 from jsonschema import validate
 
+from app import config
+from app.libs.document_strategy_selector import document_get
+from app.libs.http_strategy_selector import get_http
 from libs.ai_strategy import upload_gcs_file_part, analyze_document_with_gemini
+
 
 def scheduled_task():
     config.LOGGER.info("Scheduled task started.")
@@ -24,6 +26,7 @@ def scheduled_task():
             config.LOGGER.error("Bad data from beacon")
     else:
         config.LOGGER.error("No Data from Beacon")
+
 
 def get_beacon_data():
     headers = {
@@ -65,6 +68,7 @@ def parse_beacon_data(data):
     search = "results[*].entity.{id: id, attachments: attachments[*].{id: id, url:url, type: type}}"
     parsed = jmespath.search(search, data)
     return parsed
+
 
 def process(data):
     for item in data:

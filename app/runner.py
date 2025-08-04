@@ -1,15 +1,19 @@
+import logging
+import time
+
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
-from app.tasks.task import scheduled_task
-import time
-import logging
+
 from app import config
+from app.tasks.task import scheduled_task
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+
 def do_task_now():
     scheduled_task()
+
 
 def start_scheduler():
     scheduler = BackgroundScheduler()

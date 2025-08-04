@@ -1,15 +1,19 @@
-from urllib.parse import urlparse
 from pathlib import Path
+from urllib.parse import urlparse
+
 import requests
-from app.config import get_project_root, LOGGER
+
+from app.config import get_project_root
 
 PROJECT_ROOT = get_project_root()
+
 
 def remote_document_get(uri: str) -> bytes:
     resp = requests.get(uri)
     # may cause an exception
     resp.raise_for_status()
     return resp.content
+
 
 def local_document_get(uri: str) -> bytes:
     parsed = urlparse(uri)
@@ -28,11 +32,13 @@ def local_document_get(uri: str) -> bytes:
 
     return file_path.read_bytes()
 
+
 def document_get(uri: str) -> bytes:
     if is_file_uri(uri):
         return local_document_get(uri)
     else:
         return remote_document_get(uri)
+
 
 def is_file_uri(uri: str) -> bool:
     return urlparse(uri).scheme == "file"
