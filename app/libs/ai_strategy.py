@@ -56,7 +56,7 @@ def set_storage_with_credentials():
     return storage_client
 
 
-def analyze_document_with_gemini(location: str, document_part: Part, query_text: str):
+def analyze_document_with_gemini(location: str, document_part: Part, query_text):
     # This is critical for specifying the geographic jurisdiction - it should be the same as the GCS bucket
     initialize_vertex_ai(location=location)
 
@@ -72,7 +72,6 @@ def analyze_document_with_gemini(location: str, document_part: Part, query_text:
         Part.from_text(query_text)]
 
     LOGGER.info("Sending prompt to the model\n")
-    LOGGER.info(f"Query: {query_text}\n")
 
     # Call the model to generate content.
     response = model.generate_content(multimodal_prompt)

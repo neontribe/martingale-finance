@@ -91,12 +91,12 @@ def process(data):
                 config.LOGGER.info(f"  URL: {att_url}")
 
                 document_data = document_get(att_url)
-
+                instruction_data = document_get("file://app/libs/data/instructions.txt")
                 part = upload_gcs_file_part(att_id, document_data, att_type)
-                query = "This is a multipart query with a document part. Enumerate the properties of the document part."
-                analyze_document_with_gemini("europe-west2", part, query)
+                analyze_document_with_gemini("europe-west2", part, instruction_data)
 
-
-part = upload_gcs_file_part("chips.txt", "fish n chips!", "text/plain")
-query = "This is a multipart query with a document part. Enumerate the properties of the document part."
-analyze_document_with_gemini("europe-west2", part, query);
+# fetch the data file
+document_data= document_get("file://app/libs/data/Student_Finance_Letter_3.pdf")
+instruction_data= document_get("file://app/libs/data/instructions.txt")
+part = upload_gcs_file_part("SFL3.pdf", document_data, "application/pdf")
+analyze_document_with_gemini("europe-west2", part, instruction_data)
