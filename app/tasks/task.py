@@ -7,7 +7,7 @@ from jsonschema import validate
 from app import config
 from app.libs.document_strategy_selector import document_get
 from app.libs.http_strategy_selector import get_http
-from libs.ai_strategy import upload_gcs_file_part, analyze_document_with_gemini
+from app.libs.ai_strategy import upload_gcs_file_part, analyze_document_with_gemini
 
 
 def scheduled_task():
