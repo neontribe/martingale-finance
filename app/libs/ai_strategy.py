@@ -5,7 +5,7 @@ from google.cloud import storage, aiplatform
 from google.oauth2 import service_account
 from vertexai.generative_models import GenerativeModel, Part
 
-from config import LOGGER, GCS_BUCKET_NAME, PROJECT_ID, GOOGLE_APPLICATION_CREDENTIALS_JSON, get_project_root
+from app.config import LOGGER, GCS_BUCKET_NAME, PROJECT_ID, GOOGLE_APPLICATION_CREDENTIALS_JSON, get_project_root
 
 
 def upload_gcs_file_part(target_filename: str, contents: bytes = None, mime_type: str = 'text/plain') -> Part:
