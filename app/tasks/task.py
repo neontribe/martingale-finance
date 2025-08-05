@@ -8,6 +8,7 @@ from app import config
 from app.libs.document_strategy_selector import document_get
 from app.libs.http_strategy_selector import get_http
 from app.libs.ai_strategy import upload_gcs_file_part, analyze_document_with_gemini
+from libs.ai_strategy import delete_gcs_file
 
 
 def scheduled_task():
@@ -85,15 +86,25 @@ def process(data):
                 att_url = attachment.get("url")
                 att_type = attachment.get("type")
 
-                # Do your processing here
                 config.LOGGER.info(f"  Attachment ID: {att_id}")
                 config.LOGGER.info(f"  Type: {att_type}")
                 config.LOGGER.info(f"  URL: {att_url}")
 
-                document_data = document_get(att_url)
+                # fetch the document content from
+                document_content = document_get(att_url)
+
+                # upload to gcs and get a document "part" reference
+                part = upload_gcs_file_part(att_id, document_content, att_type)
+
+                # process the data
                 instruction_data = document_get("file://app/libs/data/instructions.txt")
-                part = upload_gcs_file_part(att_id, document_data, att_type)
                 analyze_document_with_gemini("europe-west2", part, instruction_data)
+
+                # delete the document
+                delete_gcs_file(att_id)
+
+
+
 
 # fetch the data file
 document_data= document_get("file://app/libs/data/Student_Finance_Letter_3.pdf")

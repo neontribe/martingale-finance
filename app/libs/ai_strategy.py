@@ -78,7 +78,8 @@ def analyze_document_with_gemini(location: str, document_part: Part, query_text)
 
     # Print the model's response.
     LOGGER.info("Model's determination:")
-    print(response.text)
+
+    return response.text
 
 
 def initialize_vertex_ai(location: str):
