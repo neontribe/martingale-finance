@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "Generated schema for Root",
+  "title": "selective record schema for beacon Applications",
   "type": "object",
   "properties": {
     "total": {
@@ -17,7 +17,52 @@
               "id": {
                 "type": "number"
               },
-              "attachments": {
+              "c_what_type_of_financial_evidence_is_this": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "c_identified_value": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "currency": {
+                        "type": "string"
+                      },
+                      "value": {
+                        "type": "number"
+                      },
+                      "base_value": {
+                        "type": "number"
+                      }
+                    },
+                    "required": [
+                      "currency",
+                      "value",
+                      "base_value"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "c_is_this_value_an_estimate_or_accurate": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "c_error_report_martingale_team_to_review": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "c_attachments": {
                 "type": "array",
                 "items": {
                   "type": "object",
@@ -42,7 +87,11 @@
             },
             "required": [
               "id",
-              "attachments"
+              "c_what_type_of_financial_evidence_is_this",
+              "c_identified_value",
+              "c_is_this_value_an_estimate_or_accurate",
+              "c_error_report_martingale_team_to_review",
+              "c_attachments"
             ]
           }
         },

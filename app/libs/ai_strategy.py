@@ -1,4 +1,5 @@
 import json
+from typing import Optional, Dict
 
 from google.auth.credentials import Credentials
 from google.cloud import storage, aiplatform
@@ -56,7 +57,7 @@ def set_storage_with_credentials():
     return storage_client
 
 
-def analyze_document_with_gemini(location: str, document_part: Part, query_text):
+def analyze_document_with_gemini(location: str, document_part: Part, query_text) -> Optional[Dict]:
     # This is critical for specifying the geographic jurisdiction - it should be the same as the GCS bucket
     initialize_vertex_ai(location=location)
 
@@ -79,8 +80,28 @@ def analyze_document_with_gemini(location: str, document_part: Part, query_text)
     # Print the model's response.
     LOGGER.info("Model's determination:")
 
-    return response.text
+    response_text = response.text
 
+    try:
+        if response_text.startswith("```json"):
+            response_text = response_text.strip("` \n")
+            lines = response_text.splitlines()
+            cleaned = "\n".join(lines[1:])
+
+            if cleaned.strip().endswith("```"):
+                cleaned = "\n".join(cleaned.strip().splitlines()[:-1])
+
+            data = json.loads(cleaned)
+            print(data)
+        else:
+            data = json.loads(response_text)
+
+        LOGGER.info(f"API response received and parsed: {data}")
+        return data
+
+    except Exception as e:
+        LOGGER.error(f"Response is not valid JSON: {e}")
+        return None
 
 def initialize_vertex_ai(location: str):
     try:

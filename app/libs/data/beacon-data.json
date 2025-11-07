@@ -4,19 +4,31 @@
     {
       "entity": {
         "id": 96593,
-        "attachments": []
+        "c_what_type_of_financial_evidence_is_this": null,
+        "c_identified_value": null,
+        "c_is_this_value_an_estimate_or_accurate": [],
+        "c_error_report_martingale_team_to_review": null,
+        "c_attachments": []
       }
     },
     {
       "entity": {
         "id": 96592,
-        "attachments": []
+        "c_what_type_of_financial_evidence_is_this": null,
+        "c_identified_value": null,
+        "c_is_this_value_an_estimate_or_accurate": [],
+        "c_error_report_martingale_team_to_review": null,
+        "c_attachments": []
       }
     },
     {
       "entity": {
         "id": 58411,
-        "attachments": [
+        "c_what_type_of_financial_evidence_is_this": null,
+        "c_identified_value": null,
+        "c_is_this_value_an_estimate_or_accurate": [],
+        "c_error_report_martingale_team_to_review": null,
+        "c_attachments": [
           {
             "id": "a937b75b-9764-4a39-afc6-432084faf622",
             "type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
