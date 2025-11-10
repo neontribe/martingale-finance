@@ -1,9 +1,9 @@
 from urllib.parse import urlparse
 from pathlib import Path
 import requests
-from pyprojroot import here
+from app.config import get_project_root, LOGGER
 
-PROJECT_ROOT = here()
+PROJECT_ROOT = get_project_root()
 
 def remote_document_get(uri: str) -> bytes:
     resp = requests.get(uri)

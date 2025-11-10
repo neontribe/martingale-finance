@@ -6,7 +6,7 @@ import threading
 import socketserver
 import os
 
-from app.libs.documentStrategySelector import (
+from app.libs.document_strategy_selector import (
     document_get,
     is_file_uri,
     local_document_get,
