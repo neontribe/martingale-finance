@@ -1,0 +1,7 @@
+APScheduler
+python-dotenv
+requests
+pytest
+pytest-mock
+jmespath
+jsonschema
