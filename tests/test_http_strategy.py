@@ -1,11 +1,13 @@
 import json
-import pytest
 from pathlib import Path
+
+import pytest
 from requests import Response
 
 from app.libs import http_strategy_selector
 
 FIXTURE_PATH = Path(__file__).resolve().parents[1] / "app" / "libs" / "data" / "beacon-data.json"
+
 
 @pytest.fixture
 def expected_fixture_data():
@@ -54,6 +56,3 @@ def test_real_http_get_makes_request(monkeypatch):
     assert called["timeout"] == 10
     assert isinstance(response, Response)
     assert response.status_code == 204
-
-
-
