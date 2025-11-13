@@ -8,14 +8,14 @@ from app.config import get_project_root
 PROJECT_ROOT = get_project_root()
 
 
-def remote_document_get(uri: str) -> bytes:
+def remote_document_get(uri: str) -> str:
     resp = requests.get(uri)
     # may cause an exception
     resp.raise_for_status()
-    return resp.content
+    return resp.text
 
 
-def local_document_get(uri: str) -> bytes:
+def local_document_get(uri: str) -> str:
     parsed = urlparse(uri)
     parts = []
     if parsed.netloc and parsed.netloc.lower() != "localhost":
@@ -30,10 +30,10 @@ def local_document_get(uri: str) -> bytes:
     if not file_path.is_file():
         raise IsADirectoryError(f"Expected a file but found a directory: {file_path}")
 
-    return file_path.read_bytes()
+    return file_path.read_text()
 
 
-def document_get(uri: str) -> bytes:
+def document_get(uri: str) -> str:
     if is_file_uri(uri):
         return local_document_get(uri)
     else:
