@@ -1,5 +1,5 @@
 import json
-from typing import Optional, Dict
+from typing import Optional, Dict, Any
 
 from google.auth.credentials import Credentials
 from google.cloud import storage, aiplatform
@@ -9,7 +9,7 @@ from vertexai.generative_models import GenerativeModel, Part
 from app.config import LOGGER, GCS_BUCKET_NAME, PROJECT_ID, GOOGLE_APPLICATION_CREDENTIALS_JSON, get_project_root
 
 
-def upload_gcs_file_part(target_filename: str, contents: bytes = None, mime_type: str = 'text/plain') -> Part:
+def upload_gcs_file_part(target_filename: str, contents: str = None, mime_type: str = 'text/plain') -> Part:
     gcs_uri = f"gs://{GCS_BUCKET_NAME}/{target_filename}"
 
     storage_client = set_storage_with_credentials()
@@ -57,7 +57,7 @@ def set_storage_with_credentials():
     return storage_client
 
 
-def analyze_document_with_gemini(location: str, document_part: Part, query_text) -> Optional[Dict]:
+def analyze_document_with_gemini(location: str, document_part: Part, query_text: str) -> Optional[Any]:
     # This is critical for specifying the geographic jurisdiction - it should be the same as the GCS bucket
     initialize_vertex_ai(location=location)
 

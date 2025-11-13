@@ -52,6 +52,7 @@ def make_beacon_data(data: dict):
     print(processed_data)
     return processed_data
 
+
 def get_beacon_data(uri: Optional[str]):
 
     url = uri or config.API_URL
@@ -87,13 +88,13 @@ def get_beacon_data(uri: Optional[str]):
 def parse_beacon_data(data, target_id: Optional[str]):
 
     if target_id is None:
-        search = "results[*].entity.{id: id, c_attachments: c_attachments[*].{id: id, url:url, type: type}}"
+        mode = "results[*]"
     else:
-        search = f"results[?entity.id == `{target_id}`]" + ".entity.{id: id, c_attachments: c_attachments[*].{id: id, url: url, type: type}}"
+        mode = f"results[?entity.id == `{target_id}`]"
 
-    parsed = jmespath.search(search, data)
-    return parsed
+    search = mode + ".entity.{id: id, c_application_cycle: c_application_cycle[*]c_attachments: c_attachments[*].{id: id, url:url, type: type}, c_student_finance_letter: c_student_finance_letter[*].{id: id, url:url, type: type}, c_identified_value: c_identified_value}"
 
+    return jmespath.search(search, data)
 
 def patch_beacon_data(data, uri: Optional[str]):
 
