@@ -27,20 +27,22 @@ def test_parse_beacon_data_structure_and_values(sample_data):
 
     # Keys expected from the JMESPath projection
     assert set(item.keys()) == {
-        "id",
-        "c_application_cycle",
-        "c_attachments",
-        "c_student_finance_letter",
-        "c_identified_value",
+        "application_id",
+        "applicant_id",
+        "applicant_name",
+        "application_cycle",
+        "attachments",
+        "student_finance_letter",
+        "identified_value",
     }
 
     # Values from the provided JSON
-    assert item["id"] == 4772
-    assert item["c_application_cycle"] == ["2025 entry"]
+    assert item["application_id"] == 4772
+    assert item["application_cycle"] == ["2025 entry"]
 
     # Attachments: only id, url, type should be projected
-    assert isinstance(item["c_attachments"], list)
-    assert item["c_attachments"] == [
+    assert isinstance(item["attachments"], list)
+    assert item["attachments"] == [
         {
             "id": "ffd56441-3e4f-4393-a29a-ced51d4c821a",
             "url": "https://example.com/PYas.pdf",
@@ -49,14 +51,14 @@ def test_parse_beacon_data_structure_and_values(sample_data):
     ]
 
     # Student finance letter: same projection
-    assert isinstance(item["c_student_finance_letter"], list)
-    assert item["c_student_finance_letter"] == [
+    assert isinstance(item["student_finance_letter"], list)
+    assert item["student_finance_letter"] == [
         {
-            "id": "bac56441-3e4f-4393-a29a-ced51d4c791d",
-            "url": "https://example.com/PYas.pdf",
+            "id": "54d0a853-6b9d-4323-b571-d30e1c7cc703",
+            "url": "https://example.com/BYnry.pdf",
             "type": "application/pdf",
         }
     ]
 
     # Identified value should be the numeric value from the entity
-    assert item["c_identified_value"] == 10000
+    assert item["identified_value"] == 10000

@@ -9,7 +9,7 @@ from vertexai.generative_models import GenerativeModel, Part
 from app.config import LOGGER, GCS_BUCKET_NAME, PROJECT_ID, GOOGLE_APPLICATION_CREDENTIALS_JSON, get_project_root
 
 
-def upload_gcs_file_part(target_filename: str, contents: str = None, mime_type: str = 'text/plain') -> Part:
+def upload_gcs_file_part(target_filename: str, contents: bytes = None, mime_type: str = 'text/plain') -> Part:
     gcs_uri = f"gs://{GCS_BUCKET_NAME}/{target_filename}"
 
     storage_client = set_storage_with_credentials()
@@ -57,7 +57,7 @@ def set_storage_with_credentials():
     return storage_client
 
 
-def analyze_document_with_gemini(location: str, document_part: Part, query_text: str) -> Optional[Any]:
+def analyze_document_with_gemini(location: str, document_part: Part, query_text: bytes) -> Optional[Any]:
     # This is critical for specifying the geographic jurisdiction - it should be the same as the GCS bucket
     initialize_vertex_ai(location=location)
 
@@ -70,7 +70,7 @@ def analyze_document_with_gemini(location: str, document_part: Part, query_text:
         # Part 1: reference to the document
         document_part,
         # Part 2: The text query to perform on the document.
-        Part.from_text(query_text)]
+        Part.from_data(query_text, "text/plain")]
 
     LOGGER.info("Sending prompt to the model\n")
 

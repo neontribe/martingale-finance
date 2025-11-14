@@ -185,28 +185,109 @@
         "c_attachments": [
           {
             "id": "ffd56441-3e4f-4393-a29a-ced51d4c821a",
-            "name": "BYas.pdf",
-            "size": 153356,
+            "name": "PYas.pdf",
+            "size": 133017,
             "type": "application/pdf",
             "source": "upload",
             "url": "https://example.com/PYas.pdf",
             "infected": "clean"
           }
         ],
-        "c_student_finance_letter": [
+        "c_student_finance_letter":[
           {
-            "id": "bac56441-3e4f-4393-a29a-ced51d4c791d",
-            "name": "BYas.pdf",
-            "size": 153356,
+            "id": "54d0a853-6b9d-4323-b571-d30e1c7cc703",
+            "name": "BYnry.pdf",
+            "size": 133017,
             "type": "application/pdf",
             "source": "upload",
-            "url": "https://example.com/PYas.pdf",
+            "url": "https://example.com/BYnry.pdf",
             "infected": "clean"
           }
         ],
         "c_transcript": [],
         "c_references": []
-      }
+      },
+      "references": [
+        {
+          "entity": {
+            "id": 4659,
+            "created_at": "2025-08-13T16:15:34.816Z",
+            "created_by_id": 27931,
+            "created_by_type": "user",
+            "updated_at": "2025-08-13T16:15:34.816Z",
+            "updated_by_id": 27931,
+            "updated_by_type": "user",
+            "is_archived": false,
+            "archived_at": null,
+            "archived_by_id": null,
+            "archived_by_type": null,
+            "is_locked": false,
+            "locked_at": null,
+            "locked_by_id": null,
+            "locked_by_type": null,
+            "avatar": null,
+            "entity_type_id": 256304,
+            "name": {
+              "full": "Samuel Niman",
+              "last": "Niman",
+              "first": "Samuel",
+              "middle": null,
+              "prefix": null
+            },
+            "type": [],
+            "emails": [
+              {
+                "email": "samuelniman1602@gmail.com",
+                "is_primary": true
+              }
+            ],
+            "phone_numbers": [],
+            "title": null,
+            "gender": [],
+            "notes": null,
+            "address": [],
+            "linkedin_url": null,
+            "facebook_url": null,
+            "youtube_url": null,
+            "website": null,
+            "date_of_birth": null,
+            "contact_preferences": [],
+            "interests": [],
+            "organization": [],
+            "beneficiary_notes": null,
+            "deceased": false,
+            "volunteer_status": [],
+            "volunteer_start_date": null,
+            "volunteer_availability": [],
+            "volunteer_roles": [],
+            "volunteer_notes": null,
+            "emergency_contact_name": null,
+            "emergency_contact_phone": [],
+            "emergency_contact_relationship": null,
+            "previous_database_id": null,
+            "c_name_pronunciation": null,
+            "c_preferred_name": null,
+            "c_pronouns": null,
+            "c_dietary_requirements": null,
+            "c_access_requirements": null,
+            "c_home_address": [],
+            "c_term_time_address": [],
+            "c_role": [],
+            "c_case_study": null,
+            "c_aa_dates_available": [],
+            "c_aa_experience": null,
+            "c_aa_scholarship": [],
+            "c_aa_academic_field": [],
+            "c_aa_field_maths_ph_d": [],
+            "c_aa_field_engineering": [],
+            "c_aa_field_dsh": [],
+            "c_legal_name": null,
+            "attachments": [],
+            "volunteer_documents": [],
+            "c_aa_cv": []
+          }
+        }
+      ]
     }
   ]
 }

@@ -92,8 +92,22 @@ def parse_beacon_data(data, target_id: Optional[str]):
     else:
         mode = f"results[?entity.id == `{target_id}`]"
 
-    search = mode + ".entity.{id: id, c_application_cycle: c_application_cycle[*]c_attachments: c_attachments[*].{id: id, url:url, type: type}, c_student_finance_letter: c_student_finance_letter[*].{id: id, url:url, type: type}, c_identified_value: c_identified_value}"
-
+    search = mode + (
+            ".{"
+                "application_id: entity.id,"
+                "applicant_id: references[0].entity.id,"
+                "applicant_name: references[0].entity.name.full,"
+                "application_cycle: entity.c_application_cycle[*],"
+                "attachments: entity.c_attachments[*].{"
+                    "id: id,"
+                    "url:url,"
+                    "type: type},"
+                "student_finance_letter: entity.c_student_finance_letter[*].{"
+                    "id: id,"
+                    "url:url,"
+                    "type: type},"
+                "identified_value: entity.c_identified_value}"
+    )
     return jmespath.search(search, data)
 
 def patch_beacon_data(data, uri: Optional[str]):
