@@ -57,7 +57,7 @@ def set_storage_with_credentials():
     return storage_client
 
 
-def analyze_document_with_gemini(location: str, document_part: Part, query_text: bytes) -> Optional[Any]:
+def analyze_document_with_gemini(location: str, document_part: Part, query_text: bytes) -> Optional[Dict]:
     # This is critical for specifying the geographic jurisdiction - it should be the same as the GCS bucket
     initialize_vertex_ai(location=location)
 

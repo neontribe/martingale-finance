@@ -32,13 +32,11 @@ def process(data):
     # iterate over the applications
     for item in data:
         application_id = item.get("application_id")
+        config.LOGGER.info(f"\nProcessing item ID: {application_id}")
+
         application_cycle = item.get("application_cycle", [])
-        applicant_id = item.get("applicant_id")
-        applicant_name = item.get("applicant_name")
         student_finance_letters = item.get("student_finance_letter", [])
         attachments = item.get("attachments", [])
-
-        config.LOGGER.info(f"\nProcessing item ID: {application_id}")
 
         # digest the documents and find ones that match
         parsed_docs = []
@@ -87,7 +85,7 @@ def get_document_digest(docref: Dict[str, Any], intake: Optional[str]) -> Option
         if not categorisation.get("document_valid"):
             return None
 
-        extraction_prompt = _load_prompt("file://app/libs/data/extracting_prompt.txt")
+        extraction_prompt = _load_prompt("file://app/libs/data/extraction_prompt.txt")
         extraction = validate_response(
             analyze_document_with_gemini(REGION, gcs_part, extraction_prompt),
             att_id,
@@ -101,13 +99,7 @@ def get_document_digest(docref: Dict[str, Any], intake: Optional[str]) -> Option
         delete_gcs_file(att_id)
 
 def validate_response(response, att_id):
-    parsed_response = None
-    try:
-        parsed_response = json.loads(response)
-        config.LOGGER.info(f"  Valid JSON response received for docref ID: {att_id}")
-    except json.JSONDecodeError:
-        config.LOGGER.error(f"  Invalid JSON response for docref ID: {att_id}")
-    return parsed_response
+    return response
 
 
 '''
@@ -116,11 +108,16 @@ with open("../../tests/data/sample.json", "w") as f:
     json.dump(beacon_data, f)
 '''
 
+data = { "id": "document", "url": "file://app/libs/data/Student_Finance_Letter_3.pdf", "type": "application/pdf"}
+details = get_document_digest(data, " ")
+print(details)
 
+'''
 document_data= document_get("file://app/libs/data/Student_Finance_Letter_3.pdf")
 instruction_data= document_get("file://app/libs/data/extraction_prompt.txt")
 part = upload_gcs_file_part("SFL3.pdf", document_data, "application/pdf")
 extracted_data = analyze_document_with_gemini("europe-west2", part, instruction_data)
+'''
 
 '''
 if extracted_data is not None:

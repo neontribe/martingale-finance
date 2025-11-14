@@ -13,14 +13,16 @@ Your responses will be used to select the document for further processing by ano
 - open the document associated with this request.
 - parse the content
 - understand the context of the content
-- extract the maintenance loan to be paid to the student, for the entire year and hold it as MAINTENANCE_LOAN, formatted as a float to 2 decimal places, or null if not present.
-- extract the maintenance grant to be paid to the student and hold it as MAINTENANCE_GRANT, formatted as a float to 2 decimal places, or null if not present.
+- extract the value of the money to be sent to the student's institution and hold it as UNI_MONEY, formated as a float to 2 decimal places, or null if nor present
+- extract the maintenance loan to be paid to the student for the entire year and hold it as MAINTENANCE_LOAN, formatted as a float to 2 decimal places, or null if not present
+- extract the maintenance grant to be paid to the student and hold it as MAINTENANCE_GRANT, formatted as a float to 2 decimal places, or null if not present
 - return a response in JSON based on the "# Response" instructions below
 
 # Response
 - interpolate the MAINTENANCE_LOAN and MAINTENANCE_GRANT in the following json template:
 ```
 {
+  "institutional_money": UNI_MONEY,
   "maintenance_loan": MAINTENANCE_LOAN,
   "maintenance_grant": MAINTENANCE_GRANT
 }

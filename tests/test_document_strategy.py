@@ -17,7 +17,7 @@ from app.libs.document_strategy_selector import (
 TEST_FILE_DIR = Path(__file__).parent / "data"
 TEST_FILE_NAME = "testfile.txt"
 TEST_FILE_PATH = TEST_FILE_DIR / TEST_FILE_NAME
-TEST_FILE_CONTENT = "Hello, world!\n"  # Adjust this to match the actual file content
+TEST_FILE_CONTENT = b"Hello, world!\n"  # Adjust this to match the actual file content
 
 
 def test_is_file_uri_true():
