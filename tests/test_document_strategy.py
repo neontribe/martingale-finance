@@ -14,14 +14,14 @@ from app.libs.document_strategy_selector import (
 )
 
 # Constants
-TEST_FILE_DIR = Path(__file__).parent / "data"
+TEST_FILE_DIR = Path(__file__).parent / "digest"
 TEST_FILE_NAME = "testfile.txt"
 TEST_FILE_PATH = TEST_FILE_DIR / TEST_FILE_NAME
 TEST_FILE_CONTENT = b"Hello, world!\n"  # Adjust this to match the actual file content
 
 
 def test_is_file_uri_true():
-    assert is_file_uri("file://tests/data/testfile.txt") is True
+    assert is_file_uri("file://tests/digest/testfile.txt") is True
 
 
 def test_is_file_uri_false():
@@ -29,25 +29,25 @@ def test_is_file_uri_false():
 
 
 def test_local_document_get_reads_file():
-    uri = "file://tests/data/testfile.txt"
+    uri = "file://tests/digest/testfile.txt"
     content = local_document_get(uri)
     assert content == TEST_FILE_CONTENT
 
 
 def test_document_get_local_file():
-    uri = "file://tests/data/testfile.txt"
+    uri = "file://tests/digest/testfile.txt"
     content = document_get(uri)
     assert content == TEST_FILE_CONTENT
 
 
 def test_local_document_get_file_not_found():
-    uri = "file://tests/data/nonexistent.txt"
+    uri = "file://tests/digest/nonexistent.txt"
     with pytest.raises(FileNotFoundError):
         local_document_get(uri)
 
 
 def test_local_document_get_is_directory():
-    uri = "file://tests/data"
+    uri = "file://tests/digest"
     with pytest.raises(IsADirectoryError):
         local_document_get(uri)
 
@@ -59,7 +59,7 @@ def test_http_server():
     """
     Spin up a local HTTP server serving the test file.
     """
-    os.chdir(TEST_FILE_DIR)  # serve from data directory
+    os.chdir(TEST_FILE_DIR)  # serve from digest directory
     handler = http.server.SimpleHTTPRequestHandler
     httpd = socketserver.TCPServer(("localhost", 0), handler)
     port = httpd.server_address[1]

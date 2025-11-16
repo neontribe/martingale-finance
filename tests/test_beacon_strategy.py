@@ -10,7 +10,7 @@ from  app.libs.beacon_strategy import (
 
 @pytest.fixture
 def sample_data():
-    data_path = Path(__file__).parent / "data" / "response1.json"
+    data_path = Path(__file__).parent / "digest" / "response1.json"
     with data_path.open("r", encoding="utf-8") as f:
         return json.load(f)
 

@@ -11,10 +11,44 @@ from libs.beacon_strategy import get_beacon_data, parse_beacon_data, patch_beaco
 
 REGION = "europe-west2"
 
+
+def write_csv(output, filename):
+    # Mapping of CSV headers to dict keys
+    field_map = {
+        "Record ID (person)": "applicant_id",
+        "Record ID (Application)": "application_id",
+        "Type of Financial Evidence": "authority",
+        "Identified Value": "identified_value",
+        "Estimate / Accurate?": "estimate_or_accurate",
+        "Error Report (Y/N)": "error",
+        "Notes": "error_reason",
+    }
+
+    # open a file handler
+    with open(filename, mode="w", newline="", encoding="utf-8") as f:
+        writer = csv.writer(f)
+
+        # Write header row
+        writer.writerow(field_map.keys())
+
+        # Write data rows
+        for item in output:
+            row = []
+            for header, key in field_map.items():
+                value = item.get(key)
+
+                # Convert list values to comma-separated string
+                if isinstance(value, list):
+                    value = "; ".join(value)
+
+                row.append(value)
+            writer.writerow(row)
+
+
 def scheduled_task():
     config.LOGGER.info("Scheduled task started.")
 
-    # get beacon data
+    # get beacon digest
     data = get_beacon_data()
 
     # parse it
@@ -22,14 +56,16 @@ def scheduled_task():
         parsed = parse_beacon_data(data)
         # process it
         if parsed is not None:
-            process(parsed)
+            output = process(parsed)
+            write_csv(output, "output.csv")
         else:
-            config.LOGGER.error("Bad data from beacon")
+            config.LOGGER.error("Bad digest from beacon")
     else:
         config.LOGGER.error("No Data from Beacon")
 
 def process(data):
     # iterate over the applications
+    output = []
     for item in data:
         application_id = item.get("application_id")
         config.LOGGER.info(f"\nProcessing item ID: {application_id}")
@@ -38,29 +74,27 @@ def process(data):
         student_finance_letters = item.get("student_finance_letter", [])
         attachments = item.get("attachments", [])
 
-        # digest the documents and find ones that match
-        parsed_docs = []
-        for err_msg, source in [
-            ("No student finance letters.", student_finance_letters),
-            ("No student finance letters in attachments.", attachments),
-        ]:
-            if not source:
-                config.LOGGER.error(err_msg)
-                continue
-
-            parsed_docs = list(filter(None, map(get_document_digest, source, application_cycle)))
-            if parsed_docs:  # stop at the first source that yields docs
-                break
-
-        print(parsed_docs)
-'''
-        if not parsed_docs:
-            config.LOGGER.error("No student finance letters.")
-            # write a null line to the csv
+        documents = student_finance_letters + attachments
+        if documents:
+            # get compact list of possible documents
+            digests = list(filter(None, map(get_document_digest, documents, application_cycle)))
+            best_doc = find_best(digests)
+            if best_doc:
+                output.append(make_beacon_data(best_doc, item))
         else:
-            # process the list of candidates.
-            # write a good line to the csv
-'''
+            config.LOGGER.info("No Documents")
+    return output
+
+# finds the best item in a list.
+def find_best(digests):
+    return sorted(
+        digests,
+        key=lambda x: (
+            not x["document_valid"],
+            x["maintenance_grant"] in (None, ""),
+            x["maintenance_loan"] in (None, ""),
+        )
+    )[0]
 
 @lru_cache(maxsize=8)
 def _load_prompt(uri: str) -> bytes:
@@ -77,30 +111,24 @@ def get_document_digest(docref: Dict[str, Any], intake: Optional[str]) -> Option
         gcs_part = upload_gcs_file_part(att_id, document_content, att_type)
 
         categorisation_prompt = _load_prompt("file://app/libs/data/categorising_prompt.txt")
-        categorisation = validate_response(
-            analyze_document_with_gemini(REGION, gcs_part, categorisation_prompt),
-            att_id,
-        ) or {}
+        categorisation = analyze_document_with_gemini(REGION, gcs_part, categorisation_prompt) or {}
+
+        null_extraction = {"institutional_money": None, "maintenance_loan": None, "maintenance_grant": None}
 
         if not categorisation.get("document_valid"):
-            return None
+            return { **categorisation, **null_extraction }
 
         extraction_prompt = _load_prompt("file://app/libs/data/extraction_prompt.txt")
-        extraction = validate_response(
-            analyze_document_with_gemini(REGION, gcs_part, extraction_prompt),
-            att_id,
-        ) or {}
+        extraction = analyze_document_with_gemini(REGION, gcs_part, extraction_prompt) or null_extraction
 
+        result = { **categorisation, **extraction }
+        print(result)
         # glue the two together and return
-        return categorisation | extraction
+        return result
 
     finally:
         # Always clean up, even if anything above raises
         delete_gcs_file(att_id)
-
-def validate_response(response, att_id):
-    return response
-
 
 '''
 beacon_data = get_beacon_data(config.API_URL)
@@ -108,9 +136,11 @@ with open("../../tests/data/sample.json", "w") as f:
     json.dump(beacon_data, f)
 '''
 
+'''
 data = { "id": "document", "url": "file://app/libs/data/Student_Finance_Letter_3.pdf", "type": "application/pdf"}
 details = get_document_digest(data, " ")
 print(details)
+'''
 
 '''
 document_data= document_get("file://app/libs/data/Student_Finance_Letter_3.pdf")
@@ -125,3 +155,5 @@ if extracted_data is not None:
     patch_url = "https://api.beaconcrm.org/v1/account/24909/entity/c_application/113554"
     patch_beacon_data(patch_data, patch_url)
 '''
+
+scheduled_task()

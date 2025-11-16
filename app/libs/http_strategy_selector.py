@@ -27,7 +27,7 @@ def real_http_get(url: str, headers: dict) -> requests.Response:
     return requests.get(url, headers=headers, timeout=10)
 
 def mock_http_get(url: str, headers: dict) -> requests.Response:
-    with open(PROJECT_ROOT / "app/libs/data/beacon-data.json") as f:
+    with open(PROJECT_ROOT / "app/libs/data/beacon-digest.json") as f:
         mock_data = json.load(f)
 
     mock_response = Response()

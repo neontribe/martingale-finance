@@ -3,7 +3,7 @@ import json
 import jmespath
 import jsonschema
 from jsonschema import validate
-from typing import Optional
+from typing import Optional, Union, Any
 
 import config
 from libs.http_strategy_selector import get_http, patch_http
@@ -17,43 +17,56 @@ HEADERS = {
         "Accept": "application/json"
     }
 
-def make_beacon_data(data: dict):
+def validate_candidate(digest, value, applicant_estimate):
+
+    if not digest["document_valid"]:
+        return "No valid documents"
+
+    if not digest["authority"]:
+        return "Could not extract authority type"
+
+    if not value:
+        return "Could not extract grant/loan data"
+
+    if applicant_estimate > value:
+        return f"Student reported value {applicant_estimate} is more than grant/loan {value}"
+
+    return None
+
+def make_beacon_data(digest, item):
     # Extract values
-    maintenance_grant = data.get("maintenance_grant")
-    maintenance_loan = data.get("maintenance_loan")
-    authority = data.get("authority")
+    maintenance_grant = digest.get("maintenance_grant")
+    maintenance_loan = digest.get("maintenance_loan")
+    authority = digest.get("authority")
+    applicant_estimate = item.get("applicant_estimate")
+
     # Determine which value to use and set estimate status
     if maintenance_grant is not None:
         value = maintenance_grant
-        estimate_status = ["Accurate"]
+        estimate_status = "Accurate"
     elif maintenance_loan is not None:
         value = maintenance_loan
-        estimate_status = ["Estimate"]
+        estimate_status = "Estimate"
     else:
         value = None
         estimate_status = None
+
     # Determine if there's an error
-    error_condition = (
-        data.get("document_valid") is True and (
-            (not maintenance_grant and not maintenance_loan) or
-            (authority is None or str(authority).strip() == "")
-        )
-    )
+    error_condition = validate_candidate(digest, value, applicant_estimate)
+
     processed_data = {
-        "c_what_type_of_financial_evidence_is_this": authority or None,
-        "c_identified_value": {
-            "currency": "GBP",
-            "value": value,
-            "base_value": value
-        } if value is not None else None,
-        "c_is_this_value_an_estimate_or_accurate": estimate_status,
-        "c_error_report_martingale_team_to_review": "Error in Document" if error_condition else None,
+        "application_id": item.get("application_id") or None,
+        "applicant_id": item.get("applicant_id") or None,
+        "applicant_name": item.get("applicant_name") or None,
+        "authority": authority or None,
+        "identified_value": value if value is not None else None,
+        "estimate_or_accurate": estimate_status,
+        "error": "Y" if error_condition else "N",
+        "error_reason": error_condition,
     }
-    print(processed_data)
     return processed_data
 
-
-def get_beacon_data(uri: Optional[str]):
+def get_beacon_data(uri=None):
 
     url = uri or config.API_URL
 
@@ -85,7 +98,7 @@ def get_beacon_data(uri: Optional[str]):
     return data
 
 
-def parse_beacon_data(data, target_id: Optional[str]):
+def parse_beacon_data(data, target_id: Optional[str] = None):
 
     if target_id is None:
         mode = "results[*]"
@@ -97,6 +110,7 @@ def parse_beacon_data(data, target_id: Optional[str]):
                 "application_id: entity.id,"
                 "applicant_id: references[0].entity.id,"
                 "applicant_name: references[0].entity.name.full,"
+                "applicant_estimate: entity.c_if_yes_please_state_the_total_amount_of_maintenance_loan_and_or_grant_you_received_in_your_most_recent_academic_year.value,"
                 "application_cycle: entity.c_application_cycle[*],"
                 "attachments: entity.c_attachments[*].{"
                     "id: id,"
