@@ -75,7 +75,11 @@ def analyze_document_with_gemini(location: str, document_part: Part, query_text:
     LOGGER.info("Sending prompt to the model\n")
 
     # Call the model to generate content.
-    response = model.generate_content(multimodal_prompt)
+    try:
+        response = model.generate_content(multimodal_prompt)
+    except Exception as e:
+        print(f"Error: {e}")
+        return None
 
     # Print the model's response.
     LOGGER.info("Model's determination:")

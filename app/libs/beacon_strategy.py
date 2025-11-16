@@ -28,7 +28,7 @@ def validate_candidate(digest, value, applicant_estimate):
     if not value:
         return "Could not extract grant/loan data"
 
-    if applicant_estimate > value:
+    if float(applicant_estimate or 0) > float(value or 0):
         return f"Student reported value {applicant_estimate} is more than grant/loan {value}"
 
     return None

@@ -111,7 +111,7 @@ def get_document_digest(docref: Dict[str, Any], intake: Optional[str]) -> Option
         gcs_part = upload_gcs_file_part(att_id, document_content, att_type)
 
         categorisation_prompt = _load_prompt("file://app/libs/data/categorising_prompt.txt")
-        categorisation = analyze_document_with_gemini(REGION, gcs_part, categorisation_prompt) or {}
+        categorisation = analyze_document_with_gemini(REGION, gcs_part, categorisation_prompt) or {'document_valid': None, 'issue_date': None, 'authority': None}
 
         null_extraction = {"institutional_money": None, "maintenance_loan": None, "maintenance_grant": None}
 
@@ -143,10 +143,11 @@ print(details)
 '''
 
 '''
-document_data= document_get("file://app/libs/data/Student_Finance_Letter_3.pdf")
+document_data= document_get("file://app/libs/data/docx.docx")
 instruction_data= document_get("file://app/libs/data/extraction_prompt.txt")
-part = upload_gcs_file_part("SFL3.pdf", document_data, "application/pdf")
+part = upload_gcs_file_part("docx.docx", document_data, "application/pdf")
 extracted_data = analyze_document_with_gemini("europe-west2", part, instruction_data)
+print(extracted_data)
 '''
 
 '''
@@ -156,4 +157,6 @@ if extracted_data is not None:
     patch_beacon_data(patch_data, patch_url)
 '''
 
+'''
 scheduled_task()
+'''
