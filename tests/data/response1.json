@@ -228,16 +228,16 @@
             "avatar": null,
             "entity_type_id": 256304,
             "name": {
-              "full": "Samuel Niman",
-              "last": "Niman",
-              "first": "Samuel",
+              "full": "Person Surname",
+              "last": "Surname",
+              "first": "Person",
               "middle": null,
               "prefix": null
             },
             "type": [],
             "emails": [
               {
-                "email": "samuelniman1602@gmail.com",
+                "email": "person.surname@example.com",
                 "is_primary": true
               }
             ],
