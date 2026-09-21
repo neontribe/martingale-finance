@@ -6,7 +6,7 @@ from requests import Response
 
 from app.libs import http_strategy_selector
 
-FIXTURE_PATH = Path(__file__).resolve().parents[1] / "app" / "libs" / "data" / "beacon-data.json"
+FIXTURE_PATH = Path(__file__).resolve().parents[1] / "app" / "libs" / "digest" / "beacon-digest.json"
 
 
 @pytest.fixture

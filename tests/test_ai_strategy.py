@@ -66,11 +66,11 @@ def test_upload_gcs_file_part(monkeypatch, env_constants):
     monkeypatch.setattr(Part, 'from_uri', classmethod(lambda cls, uri, mime_type=None: expected_part))
 
     # Call function
-    result = ai_strategy.upload_gcs_file_part('file.txt', b'data', 'text/plain')
+    result = ai_strategy.upload_gcs_file_part('file.txt', b'digest', 'text/plain')
 
     # Assertions
     assert result is expected_part
-    assert fake_blob.upload_args == (b'data', 'text/plain')
+    assert fake_blob.upload_args == (b'digest', 'text/plain')
 
 
 def test_delete_gcs_file_with_provided_client(monkeypatch, env_constants):
